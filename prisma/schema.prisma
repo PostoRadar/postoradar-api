@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Combustivel {
+  GASOLINA_COMUM
+  GASOLINA_ADITIVADA
+  ETANOL
+  DIESEL
+  DIESEL_S10
+  GNV
+}
+
+model Posto {
+  id        String   @id @default(uuid()) @db.Uuid
+  nome      String   @db.VarChar(160)
+  bandeira  String   @db.VarChar(80)
+  cidade    String   @db.VarChar(120)
+  endereco  String   @db.VarChar(240)
+  latitude  Float
+  longitude Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  precos Preco[]
+
+  @@index([cidade])
+  @@map("postos")
+}
+
+model Preco {
+  id           String      @id @default(uuid()) @db.Uuid
+  postoId      String      @map("posto_id") @db.Uuid
+  combustivel  Combustivel
+  valor        Decimal     @db.Decimal(6, 3)
+  // Id do usuário que reportou o preço. Não é chave estrangeira: os usuários
+  // pertencem ao serviço de autenticação (banco separado).
+  reportadoPor String      @map("reportado_por") @db.Uuid
+  atualizadoEm DateTime    @default(now()) @updatedAt @map("atualizado_em")
+
+  posto Posto @relation(fields: [postoId], references: [id], onDelete: Cascade)
+
+  // Um preço atual por combustível em cada posto; novas leituras fazem upsert.
+  @@unique([postoId, combustivel])
+  @@index([postoId])
+  @@map("precos")
+}
