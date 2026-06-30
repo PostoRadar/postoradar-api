@@ -69,11 +69,24 @@ Base: `/api`
 | Método | Rota | Auth | Descrição |
 | --- | --- | --- | --- |
 | GET | `/health` | — | Healthcheck do serviço |
-| GET | `/postos` | — | Lista postos (filtro opcional `?cidade=`) |
+| GET | `/postos` | — | Lista postos (aceita filtros e ordenação — ver abaixo) |
 | GET | `/postos/:id` | — | Detalha um posto com seus preços |
 | GET | `/postos/:id/precos` | — | Lista os preços de um posto |
 | POST | `/postos` | Bearer | Cadastra um posto |
 | PUT | `/postos/:id/precos` | Bearer | Registra/atualiza o preço de um combustível |
+
+### Filtros e ordenação de `GET /postos`
+
+| Parâmetro | Valores | Descrição |
+| --- | --- | --- |
+| `cidade` | texto | Filtra por cidade (case-insensitive) |
+| `bandeira` | texto | Filtra por bandeira (case-insensitive) |
+| `combustivel` | enum de combustível | Retorna só os postos que vendem aquele combustível |
+| `ordenarPor` | `recentes` (padrão), `preco` | `preco` ordena do menor para o maior; exige `combustivel` |
+
+Exemplos: `GET /postos?combustivel=GASOLINA_COMUM&ordenarPor=preco` (gasolina mais
+barata primeiro), `GET /postos?bandeira=Ipiranga`. Pedir `ordenarPor=preco` sem
+`combustivel` retorna `422`.
 
 Combustíveis aceitos: `GASOLINA_COMUM`, `GASOLINA_ADITIVADA`, `ETANOL`,
 `DIESEL`, `DIESEL_S10`, `GNV`.

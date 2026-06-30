@@ -30,9 +30,19 @@ export const atualizarPrecoSchema = z.object({
     .max(PRECO_MAXIMO, `O preço deve ser de no máximo R$ ${PRECO_MAXIMO.toFixed(2)}`),
 });
 
-export const listarPostosQuerySchema = z.object({
-  cidade: z.string().trim().min(1).optional(),
-});
+export const listarPostosQuerySchema = z
+  .object({
+    cidade: z.string().trim().min(1).optional(),
+    bandeira: z.string().trim().min(1).optional(),
+    combustivel: z.nativeEnum(Combustivel).optional(),
+    // 'recentes' (padrão) ou 'preco' (menor preço do combustível informado).
+    ordenarPor: z.enum(['recentes', 'preco']).default('recentes'),
+  })
+  .refine((q) => q.ordenarPor !== 'preco' || q.combustivel !== undefined, {
+    message: 'Para ordenar por preço, informe também o combustível',
+    path: ['ordenarPor'],
+  });
 
 export type CriarPostoInput = z.infer<typeof criarPostoSchema>;
 export type AtualizarPrecoInput = z.infer<typeof atualizarPrecoSchema>;
+export type ListarPostosQuery = z.infer<typeof listarPostosQuerySchema>;
