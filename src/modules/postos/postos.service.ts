@@ -1,6 +1,9 @@
+import { randomUUID } from 'node:crypto';
 import type { Combustivel, Posto, Preco } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 import { notFound } from '../../lib/http-error';
+import { eventPublisher } from '../../messaging/event-publisher';
+import { TOPICO_PRECO_ATUALIZADO, type PrecoAtualizadoEvent } from '../../messaging/events';
 import type {
   AtualizarPrecoInput,
   CriarPostoInput,
@@ -69,9 +72,9 @@ export async function atualizarPreco(
   usuarioId: string,
 ) {
   // Garante que o posto existe antes de gravar o preço.
-  await buscarPosto(postoId);
+  const posto = await buscarPosto(postoId);
 
-  return prisma.preco.upsert({
+  const preco = await prisma.preco.upsert({
     where: { postoId_combustivel: { postoId, combustivel: input.combustivel } },
     create: {
       postoId,
@@ -84,6 +87,39 @@ export async function atualizarPreco(
       reportadoPor: usuarioId,
     },
   });
+
+  await publicarPrecoAtualizado(posto, preco);
+
+  return preco;
+}
+
+// Publica o evento que alimenta o Histórico e as Notificações. A persistência
+// do preço já foi concluída; uma falha aqui não deve quebrar a resposta ao
+// usuário (RNF05) — a entrega confiável é responsabilidade do broker.
+async function publicarPrecoAtualizado(posto: Posto, preco: Preco): Promise<void> {
+  const evento: PrecoAtualizadoEvent = {
+    evento: TOPICO_PRECO_ATUALIZADO,
+    eventId: randomUUID(),
+    ocorridoEm: new Date().toISOString(),
+    dados: {
+      postoId: posto.id,
+      nomePosto: posto.nome,
+      bairro: posto.bairro,
+      cidade: posto.cidade,
+      latitude: posto.latitude,
+      longitude: posto.longitude,
+      combustivel: preco.combustivel,
+      valor: Number(preco.valor),
+      reportadoPor: preco.reportadoPor,
+      atualizadoEm: preco.atualizadoEm.toISOString(),
+    },
+  };
+
+  try {
+    await eventPublisher.publicar(TOPICO_PRECO_ATUALIZADO, evento);
+  } catch (err) {
+    console.error('Falha ao publicar evento preco-atualizado:', err);
+  }
 }
 
 export async function listarPrecos(postoId: string) {

@@ -34,6 +34,22 @@ serviço de auth confirmar o token, os dados do usuário ficam disponíveis em
 `req.user`. Isso mantém a responsabilidade sobre credenciais isolada no serviço
 de autenticação — um requisito típico de sistemas distribuídos.
 
+### Mensageria (eventos)
+
+Quando um preço é atualizado, a API **publica** o evento `preco-atualizado` na
+mensageria (UC06). Os serviços de **Histórico** (registra a mudança) e de
+**Notificações** (push em tempo real via WebSocket) são os **consumidores** —
+desacoplados da API, que não espera por eles (RNF05/RNF06).
+
+A publicação é feita através da abstração `EventPublisher` (`src/messaging/`),
+selecionada por `MESSAGING_DRIVER`:
+
+- `log` (padrão) — registra o evento no console; útil em desenvolvimento.
+- `kafka` — publica num broker Kafka *(a implementar quando a infra subir)*.
+
+Como a regra de negócio depende apenas da interface, trocar de driver não exige
+mudança no código dos serviços.
+
 ## Modelo de dados
 
 - **Posto**: `nome`, `bandeira`, `endereco`, `bairro`, `cidade`, `estado` (UF),
@@ -138,3 +154,4 @@ Configure a variável `authToken` com um access token obtido no `postoradar-auth
 | `NODE_ENV` | `development` | Ambiente de execução |
 | `DATABASE_URL` | — | String de conexão do PostgreSQL |
 | `AUTH_SERVICE_URL` | — | Base do serviço de autenticação (ex.: `http://localhost:4000/api`) |
+| `MESSAGING_DRIVER` | `log` | Backend de mensageria: `log` ou `kafka` |

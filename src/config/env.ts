@@ -6,6 +6,9 @@ const schema = z.object({
   PORT: z.coerce.number().int().positive().default(3333),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),
   AUTH_SERVICE_URL: z.string().url('AUTH_SERVICE_URL deve ser uma URL válida'),
+  // Backend de mensageria para publicar eventos. 'log' apenas registra os
+  // eventos (desenvolvimento); 'kafka' publica num broker real.
+  MESSAGING_DRIVER: z.enum(['log', 'kafka']).default('log'),
 });
 
 const parsed = schema.safeParse(process.env);
