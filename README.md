@@ -53,10 +53,14 @@ Pré-requisitos: Node.js 20+, um PostgreSQL acessível e o serviço
 npm install
 cp .env.example .env       # ajuste DATABASE_URL e AUTH_SERVICE_URL
 npm run prisma:migrate
+npm run seed               # opcional: popula postos de exemplo do Recife
 npm run dev
 ```
 
 A API sobe por padrão em `http://localhost:3333`.
+
+O `npm run seed` é idempotente: limpa a base e insere ~10 postos de exemplo com
+preços, útil para ter dados no mapa durante o desenvolvimento e a demonstração.
 
 ## Endpoints
 
