@@ -17,9 +17,17 @@ export const criarPostoSchema = z.object({
   longitude: z.number().min(-180).max(180),
 });
 
+// RN02: o preço deve ser positivo e dentro de uma faixa plausível, evitando
+// valores absurdos digitados por engano (ou de má-fé) pela comunidade.
+const PRECO_MINIMO = 1;
+const PRECO_MAXIMO = 15;
+
 export const atualizarPrecoSchema = z.object({
   combustivel: z.nativeEnum(Combustivel),
-  valor: z.number().positive('O valor deve ser positivo').max(999.999),
+  valor: z
+    .number()
+    .min(PRECO_MINIMO, `O preço deve ser de no mínimo R$ ${PRECO_MINIMO.toFixed(2)}`)
+    .max(PRECO_MAXIMO, `O preço deve ser de no máximo R$ ${PRECO_MAXIMO.toFixed(2)}`),
 });
 
 export const listarPostosQuerySchema = z.object({
