@@ -1,0 +1,102 @@
+{
+  "info": {
+    "name": "PostoRadar - API",
+    "description": "Coleção de testes da API principal. Defina a variável authToken com um access token obtido no postoradar-auth para usar as rotas protegidas. O 'Criar posto' salva o id do posto na variável postoId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3333/api" },
+    { "key": "authToken", "value": "" },
+    { "key": "postoId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "Listar postos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/postos?cidade=",
+          "host": ["{{baseUrl}}"],
+          "path": ["postos"],
+          "query": [{ "key": "cidade", "value": "" }]
+        }
+      }
+    },
+    {
+      "name": "Criar posto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const data = pm.response.json();",
+              "if (data.id) pm.collectionVariables.set('postoId', data.id);",
+              "pm.test('status 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Posto Boa Viagem\",\n  \"bandeira\": \"Ipiranga\",\n  \"cidade\": \"Recife\",\n  \"endereco\": \"Av. Boa Viagem, 1000\",\n  \"latitude\": -8.12,\n  \"longitude\": -34.9\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/postos", "host": ["{{baseUrl}}"], "path": ["postos"] }
+      }
+    },
+    {
+      "name": "Detalhar posto",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/postos/{{postoId}}", "host": ["{{baseUrl}}"], "path": ["postos", "{{postoId}}"] }
+      }
+    },
+    {
+      "name": "Atualizar preço",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"combustivel\": \"GASOLINA_COMUM\",\n  \"valor\": 5.799\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/postos/{{postoId}}/precos",
+          "host": ["{{baseUrl}}"],
+          "path": ["postos", "{{postoId}}", "precos"]
+        }
+      }
+    },
+    {
+      "name": "Listar preços do posto",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/postos/{{postoId}}/precos",
+          "host": ["{{baseUrl}}"],
+          "path": ["postos", "{{postoId}}", "precos"]
+        }
+      }
+    }
+  ]
+}
