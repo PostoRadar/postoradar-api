@@ -54,7 +54,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nome\": \"Posto Boa Viagem\",\n  \"bandeira\": \"Ipiranga\",\n  \"cidade\": \"Recife\",\n  \"endereco\": \"Av. Boa Viagem, 1000\",\n  \"latitude\": -8.12,\n  \"longitude\": -34.9\n}"
+          "raw": "{\n  \"nome\": \"Posto Boa Viagem\",\n  \"bandeira\": \"Ipiranga\",\n  \"endereco\": \"Av. Boa Viagem, 1000\",\n  \"bairro\": \"Boa Viagem\",\n  \"cidade\": \"Recife\",\n  \"estado\": \"PE\",\n  \"cep\": \"51011-000\",\n  \"latitude\": -8.12,\n  \"longitude\": -34.9\n}"
         },
         "url": { "raw": "{{baseUrl}}/postos", "host": ["{{baseUrl}}"], "path": ["postos"] }
       }

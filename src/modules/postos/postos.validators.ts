@@ -4,8 +4,15 @@ import { Combustivel } from '@prisma/client';
 export const criarPostoSchema = z.object({
   nome: z.string().trim().min(2, 'O nome do posto é obrigatório').max(160),
   bandeira: z.string().trim().min(2, 'A bandeira é obrigatória').max(80),
-  cidade: z.string().trim().min(2, 'A cidade é obrigatória').max(120),
   endereco: z.string().trim().min(3, 'O endereço é obrigatório').max(240),
+  bairro: z.string().trim().min(2, 'O bairro é obrigatório').max(120),
+  cidade: z.string().trim().min(2, 'A cidade é obrigatória').max(120),
+  estado: z.string().trim().length(2, 'O estado deve ser a sigla da UF (2 letras)').toUpperCase(),
+  cep: z
+    .string()
+    .trim()
+    .regex(/^\d{5}-?\d{3}$/, 'CEP inválido')
+    .optional(),
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
 });

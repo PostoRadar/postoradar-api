@@ -7,10 +7,13 @@ export async function criarPosto(input: CriarPostoInput) {
 }
 
 export async function listarPostos(filtros: { cidade?: string }) {
+  // O mapa exibe apenas postos ativos; um posto desativado some da listagem
+  // sem que seu histórico seja perdido.
   return prisma.posto.findMany({
-    where: filtros.cidade
-      ? { cidade: { equals: filtros.cidade, mode: 'insensitive' } }
-      : undefined,
+    where: {
+      ativo: true,
+      ...(filtros.cidade ? { cidade: { equals: filtros.cidade, mode: 'insensitive' } } : {}),
+    },
     include: { precos: true },
     orderBy: { createdAt: 'desc' },
   });

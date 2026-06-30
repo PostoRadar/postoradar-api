@@ -36,7 +36,9 @@ de autenticação — um requisito típico de sistemas distribuídos.
 
 ## Modelo de dados
 
-- **Posto**: `nome`, `bandeira`, `cidade`, `endereco`, `latitude`, `longitude`.
+- **Posto**: `nome`, `bandeira`, `endereco`, `bairro`, `cidade`, `estado` (UF),
+  `cep` (opcional), `latitude`, `longitude` e `ativo` (postos desativados saem
+  da listagem do mapa sem perder o histórico).
 - **Preço**: vinculado a um posto, com `combustivel`, `valor`, `reportadoPor`
   (id do usuário, vindo do auth) e `atualizadoEm`. Mantém-se **um preço corrente
   por (posto, combustível)** — uma nova leitura faz `upsert`. O histórico
@@ -80,8 +82,11 @@ Combustíveis aceitos: `GASOLINA_COMUM`, `GASOLINA_ADITIVADA`, `ETANOL`,
 {
   "nome": "Posto Boa Viagem",
   "bandeira": "Ipiranga",
-  "cidade": "Recife",
   "endereco": "Av. Boa Viagem, 1000",
+  "bairro": "Boa Viagem",
+  "cidade": "Recife",
+  "estado": "PE",
+  "cep": "51011-000",
   "latitude": -8.12,
   "longitude": -34.9
 }
