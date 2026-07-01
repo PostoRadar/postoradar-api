@@ -9,6 +9,8 @@ const schema = z.object({
   // Backend de mensageria para publicar eventos. 'log' apenas registra os
   // eventos (desenvolvimento); 'kafka' publica num broker real.
   MESSAGING_DRIVER: z.enum(['log', 'kafka']).default('log'),
+  // Brokers Kafka separados por vírgula (usado quando MESSAGING_DRIVER=kafka).
+  KAFKA_BROKERS: z.string().default('localhost:9092'),
 });
 
 const parsed = schema.safeParse(process.env);

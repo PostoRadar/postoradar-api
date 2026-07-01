@@ -8,23 +8,30 @@ import type { DomainEvent } from './events';
  */
 export interface EventPublisher {
   publicar(topico: string, evento: DomainEvent): Promise<void>;
+  encerrar(): Promise<void>;
 }
 
 /**
  * Implementação de desenvolvimento: apenas registra o evento no log. Permite
- * exercitar o fluxo de publicação sem depender de um broker. Será trocada pela
- * implementação Kafka quando a mensageria estiver disponível (MESSAGING_DRIVER=kafka).
+ * exercitar o fluxo de publicação sem depender de um broker.
  */
 class LogEventPublisher implements EventPublisher {
   async publicar(topico: string, evento: DomainEvent): Promise<void> {
     console.log(`[mensageria] evento publicado em "${topico}":`, JSON.stringify(evento));
   }
+
+  async encerrar(): Promise<void> {
+    // Nada a encerrar.
+  }
 }
 
 function criarEventPublisher(): EventPublisher {
   switch (env.MESSAGING_DRIVER) {
-    case 'kafka':
-      throw new Error('Publisher Kafka ainda não implementado — defina MESSAGING_DRIVER=log');
+    case 'kafka': {
+      // Import tardio: só carrega o kafkajs quando o driver Kafka é usado.
+      const { KafkaEventPublisher } = require('./kafka-event-publisher') as typeof import('./kafka-event-publisher');
+      return new KafkaEventPublisher();
+    }
     case 'log':
     default:
       return new LogEventPublisher();

@@ -45,10 +45,12 @@ A publicação é feita através da abstração `EventPublisher` (`src/messaging
 selecionada por `MESSAGING_DRIVER`:
 
 - `log` (padrão) — registra o evento no console; útil em desenvolvimento.
-- `kafka` — publica num broker Kafka *(a implementar quando a infra subir)*.
+- `kafka` — publica no tópico `preco-atualizado` de um broker Kafka.
 
 Como a regra de negócio depende apenas da interface, trocar de driver não exige
-mudança no código dos serviços.
+mudança no código dos serviços. O broker Kafka sobe via `docker-compose` no
+repositório `postoradar-infra` (`docker compose up -d`); aponte `KAFKA_BROKERS`
+para ele (padrão `localhost:9092`).
 
 ## Modelo de dados
 
@@ -155,3 +157,4 @@ Configure a variável `authToken` com um access token obtido no `postoradar-auth
 | `DATABASE_URL` | — | String de conexão do PostgreSQL |
 | `AUTH_SERVICE_URL` | — | Base do serviço de autenticação (ex.: `http://localhost:4000/api`) |
 | `MESSAGING_DRIVER` | `log` | Backend de mensageria: `log` ou `kafka` |
+| `KAFKA_BROKERS` | `localhost:9092` | Brokers Kafka (separados por vírgula), usado com `MESSAGING_DRIVER=kafka` |
