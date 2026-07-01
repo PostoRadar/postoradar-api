@@ -124,9 +124,17 @@ Combustíveis aceitos: `GASOLINA_COMUM`, `GASOLINA_ADITIVADA`, `ETANOL`,
   "estado": "PE",
   "cep": "51011-000",
   "latitude": -8.12,
-  "longitude": -34.9
+  "longitude": -34.9,
+  "precos": [
+    { "combustivel": "GASOLINA_COMUM", "valor": 5.79 },
+    { "combustivel": "ETANOL", "valor": 4.09 }
+  ]
 }
 ```
+
+O campo `precos` é **opcional** — permite cadastrar o posto já com preços iniciais
+(UC09). Sem ele, o posto é criado sem preços e cada um pode ser informado depois
+via `PUT /postos/:id/precos`.
 
 **Atualizar preço** — `PUT /api/postos/:id/precos` (com Bearer)
 

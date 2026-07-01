@@ -11,8 +11,27 @@ import type {
   ListarPostosQuery,
 } from './postos.validators';
 
-export async function criarPosto(input: CriarPostoInput) {
-  return prisma.posto.create({ data: input });
+export async function criarPosto(input: CriarPostoInput, usuarioId: string) {
+  const { precos, ...dadosPosto } = input;
+
+  return prisma.posto.create({
+    data: {
+      ...dadosPosto,
+      // Preços iniciais informados no cadastro (UC09) são gravados junto,
+      // registrando o colaborador que os reportou.
+      precos:
+        precos && precos.length > 0
+          ? {
+              create: precos.map((preco) => ({
+                combustivel: preco.combustivel,
+                valor: preco.valor,
+                reportadoPor: usuarioId,
+              })),
+            }
+          : undefined,
+    },
+    include: { precos: true },
+  });
 }
 
 export async function atualizarPosto(id: string, input: AtualizarPostoInput) {

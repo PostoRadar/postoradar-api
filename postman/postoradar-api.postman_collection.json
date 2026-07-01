@@ -54,7 +54,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nome\": \"Posto Boa Viagem\",\n  \"bandeira\": \"Ipiranga\",\n  \"endereco\": \"Av. Boa Viagem, 1000\",\n  \"bairro\": \"Boa Viagem\",\n  \"cidade\": \"Recife\",\n  \"estado\": \"PE\",\n  \"cep\": \"51011-000\",\n  \"latitude\": -8.12,\n  \"longitude\": -34.9\n}"
+          "raw": "{\n  \"nome\": \"Posto Boa Viagem\",\n  \"bandeira\": \"Ipiranga\",\n  \"endereco\": \"Av. Boa Viagem, 1000\",\n  \"bairro\": \"Boa Viagem\",\n  \"cidade\": \"Recife\",\n  \"estado\": \"PE\",\n  \"cep\": \"51011-000\",\n  \"latitude\": -8.12,\n  \"longitude\": -34.9,\n  \"precos\": [\n    { \"combustivel\": \"GASOLINA_COMUM\", \"valor\": 5.79 },\n    { \"combustivel\": \"ETANOL\", \"valor\": 4.09 }\n  ]\n}"
         },
         "url": { "raw": "{{baseUrl}}/postos", "host": ["{{baseUrl}}"], "path": ["postos"] }
       }

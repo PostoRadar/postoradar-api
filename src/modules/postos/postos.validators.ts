@@ -1,7 +1,21 @@
 import { z } from 'zod';
 import { Combustivel } from '@prisma/client';
 
-export const criarPostoSchema = z.object({
+// RN02: o preço deve ser positivo e dentro de uma faixa plausível, evitando
+// valores absurdos digitados por engano (ou de má-fé) pela comunidade.
+const PRECO_MINIMO = 1;
+const PRECO_MAXIMO = 15;
+
+const precoItemSchema = z.object({
+  combustivel: z.nativeEnum(Combustivel),
+  valor: z
+    .number()
+    .min(PRECO_MINIMO, `O preço deve ser de no mínimo R$ ${PRECO_MINIMO.toFixed(2)}`)
+    .max(PRECO_MAXIMO, `O preço deve ser de no máximo R$ ${PRECO_MAXIMO.toFixed(2)}`),
+});
+
+// Campos básicos do posto, reaproveitados no cadastro e na atualização.
+const postoBaseSchema = z.object({
   nome: z.string().trim().min(2, 'O nome do posto é obrigatório').max(160),
   bandeira: z.string().trim().min(2, 'A bandeira é obrigatória').max(80),
   endereco: z.string().trim().min(3, 'O endereço é obrigatório').max(240),
@@ -17,27 +31,28 @@ export const criarPostoSchema = z.object({
   longitude: z.number().min(-180).max(180),
 });
 
+// Cadastro aceita opcionalmente preços iniciais (UC09), sem combustível repetido.
+export const criarPostoSchema = postoBaseSchema
+  .extend({ precos: z.array(precoItemSchema).max(6).optional() })
+  .refine(
+    (data) => {
+      if (!data.precos) return true;
+      const tipos = data.precos.map((p) => p.combustivel);
+      return new Set(tipos).size === tipos.length;
+    },
+    { message: 'Há combustível repetido na lista de preços iniciais', path: ['precos'] },
+  );
+
 // Atualização parcial do posto (inclui ativar/desativar). Todos os campos são
 // opcionais, mas ao menos um precisa ser informado.
-export const atualizarPostoSchema = criarPostoSchema
+export const atualizarPostoSchema = postoBaseSchema
   .partial()
   .extend({ ativo: z.boolean().optional() })
   .refine((data) => Object.keys(data).length > 0, {
     message: 'Informe ao menos um campo para atualizar',
   });
 
-// RN02: o preço deve ser positivo e dentro de uma faixa plausível, evitando
-// valores absurdos digitados por engano (ou de má-fé) pela comunidade.
-const PRECO_MINIMO = 1;
-const PRECO_MAXIMO = 15;
-
-export const atualizarPrecoSchema = z.object({
-  combustivel: z.nativeEnum(Combustivel),
-  valor: z
-    .number()
-    .min(PRECO_MINIMO, `O preço deve ser de no mínimo R$ ${PRECO_MINIMO.toFixed(2)}`)
-    .max(PRECO_MAXIMO, `O preço deve ser de no máximo R$ ${PRECO_MAXIMO.toFixed(2)}`),
-});
+export const atualizarPrecoSchema = precoItemSchema;
 
 export const listarPostosQuerySchema = z
   .object({

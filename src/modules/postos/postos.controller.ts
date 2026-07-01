@@ -9,7 +9,7 @@ import {
 
 export async function criar(req: Request, res: Response): Promise<void> {
   const data = criarPostoSchema.parse(req.body);
-  const posto = await postosService.criarPosto(data);
+  const posto = await postosService.criarPosto(data, req.user!.sub);
   res.status(201).json(posto);
 }
 
