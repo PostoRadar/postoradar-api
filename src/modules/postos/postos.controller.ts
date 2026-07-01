@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import * as postosService from './postos.service';
 import {
+  atualizarPostoSchema,
   atualizarPrecoSchema,
   criarPostoSchema,
   listarPostosQuerySchema,
@@ -20,6 +21,12 @@ export async function listar(req: Request, res: Response): Promise<void> {
 
 export async function detalhar(req: Request, res: Response): Promise<void> {
   const posto = await postosService.buscarPosto(req.params.id);
+  res.status(200).json(posto);
+}
+
+export async function atualizar(req: Request, res: Response): Promise<void> {
+  const data = atualizarPostoSchema.parse(req.body);
+  const posto = await postosService.atualizarPosto(req.params.id, data);
   res.status(200).json(posto);
 }
 

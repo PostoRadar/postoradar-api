@@ -17,6 +17,15 @@ export const criarPostoSchema = z.object({
   longitude: z.number().min(-180).max(180),
 });
 
+// Atualização parcial do posto (inclui ativar/desativar). Todos os campos são
+// opcionais, mas ao menos um precisa ser informado.
+export const atualizarPostoSchema = criarPostoSchema
+  .partial()
+  .extend({ ativo: z.boolean().optional() })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Informe ao menos um campo para atualizar',
+  });
+
 // RN02: o preço deve ser positivo e dentro de uma faixa plausível, evitando
 // valores absurdos digitados por engano (ou de má-fé) pela comunidade.
 const PRECO_MINIMO = 1;
@@ -44,5 +53,6 @@ export const listarPostosQuerySchema = z
   });
 
 export type CriarPostoInput = z.infer<typeof criarPostoSchema>;
+export type AtualizarPostoInput = z.infer<typeof atualizarPostoSchema>;
 export type AtualizarPrecoInput = z.infer<typeof atualizarPrecoSchema>;
 export type ListarPostosQuery = z.infer<typeof listarPostosQuerySchema>;

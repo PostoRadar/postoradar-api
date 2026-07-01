@@ -11,6 +11,7 @@ router.get('/:id', asyncHandler(postosController.detalhar));
 router.get('/:id/precos', asyncHandler(postosController.listarPrecos));
 
 router.post('/', authenticate, asyncHandler(postosController.criar));
+router.patch('/:id', authenticate, asyncHandler(postosController.atualizar));
 router.put('/:id/precos', authenticate, asyncHandler(postosController.atualizarPreco));
 
 export { router as postosRoutes };

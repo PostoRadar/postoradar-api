@@ -68,6 +68,21 @@
       }
     },
     {
+      "name": "Editar / desativar posto",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bandeira\": \"Petrobras\",\n  \"ativo\": true\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/postos/{{postoId}}", "host": ["{{baseUrl}}"], "path": ["postos", "{{postoId}}"] }
+      }
+    },
+    {
       "name": "Atualizar preço",
       "request": {
         "method": "PUT",

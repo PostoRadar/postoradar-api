@@ -91,6 +91,7 @@ Base: `/api`
 | GET | `/postos/:id` | — | Detalha um posto com seus preços |
 | GET | `/postos/:id/precos` | — | Lista os preços de um posto |
 | POST | `/postos` | Bearer | Cadastra um posto |
+| PATCH | `/postos/:id` | Bearer | Edita dados do posto ou ativa/desativa (campos parciais) |
 | PUT | `/postos/:id/precos` | Bearer | Registra/atualiza o preço de um combustível |
 
 ### Filtros e ordenação de `GET /postos`

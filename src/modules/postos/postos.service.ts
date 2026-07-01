@@ -5,6 +5,7 @@ import { notFound } from '../../lib/http-error';
 import { eventPublisher } from '../../messaging/event-publisher';
 import { TOPICO_PRECO_ATUALIZADO, type PrecoAtualizadoEvent } from '../../messaging/events';
 import type {
+  AtualizarPostoInput,
   AtualizarPrecoInput,
   CriarPostoInput,
   ListarPostosQuery,
@@ -12,6 +13,17 @@ import type {
 
 export async function criarPosto(input: CriarPostoInput) {
   return prisma.posto.create({ data: input });
+}
+
+export async function atualizarPosto(id: string, input: AtualizarPostoInput) {
+  // Garante que o posto existe (lança 404 caso contrário).
+  await buscarPosto(id);
+
+  return prisma.posto.update({
+    where: { id },
+    data: input,
+    include: { precos: true },
+  });
 }
 
 type PostoComPrecos = Posto & { precos: Preco[] };
