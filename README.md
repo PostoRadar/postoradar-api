@@ -77,6 +77,10 @@ npm run dev
 
 A API sobe por padrão em `http://localhost:3333`.
 
+Há um `Dockerfile` para rodar em container. Para subir a API junto com o Auth,
+o PostgreSQL e o Kafka de uma vez só, use o `docker-compose` do repositório
+`postoradar-infra` (`docker compose up -d --build`).
+
 O `npm run seed` é idempotente: limpa a base e insere ~10 postos de exemplo com
 preços, útil para ter dados no mapa durante o desenvolvimento e a demonstração.
 
